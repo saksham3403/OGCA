@@ -1,0 +1,221 @@
+# 🎨 ENHANCED LOGIN/REGISTER REDESIGN
+# Modern card-based design with better UX
+
+Replace the AuthenticationUI class in auth_ui.py with this enhanced version:
+
+```python
+"""Enhanced Authentication UI Module - Modern Card Design"""
+import tkinter as tk
+from tkinter import ttk, messagebox, simpledialog
+from config import COLORS, FONTS, WINDOW_WIDTH, WINDOW_HEIGHT
+from utils import CustomButton, PremiumButton, CustomEntry, validate_email, validate_password, show_message
+from database import Database
+
+
+class AuthenticationUI:
+    def __init__(self, parent, on_login_success):
+        self.parent = parent
+        self.on_login_success = on_login_success
+        self.db = Database()
+        self.current_frame = None
+        
+        self.setup_ui()
+
+    def setup_ui(self):
+        """Setup modern authentication UI with enhanced design"""
+        self.parent.config(bg=COLORS["primary"])
+        
+        # Main container with gradient background
+        main_frame = tk.Frame(self.parent, bg=COLORS["primary"])
+        main_frame.pack(fill=tk.BOTH, expand=True)
+        
+        # Top accent bar
+        accent_bar = tk.Frame(main_frame, bg=COLORS["accent"], height=5)
+        accent_bar.pack(fill=tk.X)
+        accent_bar.pack_propagate(False)
+        
+        # Center card
+        card_bg = tk.Frame(main_frame, bg=COLORS["primary"])
+        card_bg.pack(fill=tk.BOTH, expand=True, padx=40, pady=60)
+        
+        card = tk.Frame(card_bg, bg=COLORS["surface"], relief=tk.RIDGE, bd=2)
+        card.pack(fill=tk.BOTH, expand=True)
+        
+        # Card header with gradient effect
+        header = tk.Frame(card, bg=COLORS["primary"])
+        header.pack(fill=tk.X)
+        
+        tk.Label(header, text="💼", font=("Segoe UI Emoji", 36),
+                fg="white", bg=COLORS["primary"]).pack(pady=(20, 10))
+        
+        tk.Label(header, text="Expense Tracker Pro", font=(FONTS["title"][0], 22, "bold"),
+                fg="white", bg=COLORS["primary"]).pack()
+        
+        tk.Label(header, text="Smart Financial Management", font=FONTS["small"],
+                fg="white", bg=COLORS["primary"]).pack(pady=(5, 20))
+        
+        # Divider
+        tk.Frame(card, bg=COLORS["border"], height=1).pack(fill=tk.X)
+        
+        # Form container
+        self.form_container = tk.Frame(card, bg=COLORS["surface"])
+        self.form_container.pack(fill=tk.BOTH, expand=True, padx=40, pady=30)
+        
+        self.show_login_form()
+
+    def clear_form(self):
+        """Clear form container"""
+        for widget in self.form_container.winfo_children():
+            widget.destroy()
+
+    def show_login_form(self):
+        """Display enhanced login form"""
+        self.clear_form()
+        
+        # Title
+        tk.Label(self.form_container, text="Welcome Back", font=FONTS["heading"],
+                fg=COLORS["primary"], bg=COLORS["surface"]).pack(pady=(0, 5), anchor=tk.W)
+        
+        tk.Label(self.form_container, text="Sign in to your account", font=FONTS["small"],
+                fg=COLORS["text_secondary"], bg=COLORS["surface"]).pack(pady=(0, 25), anchor=tk.W)
+        
+        # Form fields
+        username_entry = CustomEntry(self.form_container, placeholder="Username")
+        username_entry.pack(fill=tk.X, pady=10)
+        
+        password_entry = CustomEntry(self.form_container, placeholder="Password", show="•")
+        password_entry.pack(fill=tk.X, pady=10)
+        
+        # Button container
+        btn_frame = tk.Frame(self.form_container, bg=COLORS["surface"])
+        btn_frame.pack(fill=tk.X, pady=25)
+        
+        sign_in_btn = PremiumButton(btn_frame, text="Sign In", width=20,
+                                    command=lambda: self.handle_login(
+                                        username_entry.get(),
+                                        password_entry.get()))
+        sign_in_btn.pack()
+        
+        # Divider
+        divider_frame = tk.Frame(self.form_container, bg=COLORS["surface"])
+        divider_frame.pack(fill=tk.X, pady=15)
+        tk.Frame(divider_frame, bg=COLORS["border"], height=1).pack(fill=tk.X)
+        
+        # Register link
+        reg_frame = tk.Frame(self.form_container, bg=COLORS["surface"])
+        reg_frame.pack(fill=tk.X)
+        
+        tk.Label(reg_frame, text="New to Express? ", font=FONTS["body"],
+                fg=COLORS["text_secondary"], bg=COLORS["surface"]).pack(side=tk.LEFT)
+        
+        reg_btn = tk.Button(reg_frame, text="Create Account", font=(FONTS["body"][0], FONTS["body"][1], "underline"),
+                           fg=COLORS["primary"], bg=COLORS["surface"], relief=tk.FLAT,
+                           cursor="hand2",
+                           command=self.show_register_form)
+        reg_btn.pack(side=tk.LEFT)
+
+    def show_register_form(self):
+        """Display enhanced registration form"""
+        self.clear_form()
+        
+        # Title
+        tk.Label(self.form_container, text="Create Account", font=FONTS["heading"],
+                fg=COLORS["primary"], bg=COLORS["surface"]).pack(pady=(0, 5), anchor=tk.W)
+        
+        tk.Label(self.form_container, text="Join us today", font=FONTS["small"],
+                fg=COLORS["text_secondary"], bg=COLORS["surface"]).pack(pady=(0, 20), anchor=tk.W)
+        
+        # Form fields
+        fullname_entry = CustomEntry(self.form_container, placeholder="Full Name")
+        fullname_entry.pack(fill=tk.X, pady=8)
+        
+        username_entry = CustomEntry(self.form_container, placeholder="Username")
+        username_entry.pack(fill=tk.X, pady=8)
+        
+        email_entry = CustomEntry(self.form_container, placeholder="Email Address")
+        email_entry.pack(fill=tk.X, pady=8)
+        
+        password_entry = CustomEntry(self.form_container, placeholder="Password", show="•")
+        password_entry.pack(fill=tk.X, pady=8)
+        
+        confirm_entry = CustomEntry(self.form_container, placeholder="Confirm Password", show="•")
+        confirm_entry.pack(fill=tk.X, pady=8)
+        
+        # Button container
+        btn_frame = tk.Frame(self.form_container, bg=COLORS["surface"])
+        btn_frame.pack(fill=tk.X, pady=20)
+        
+        create_btn = PremiumButton(btn_frame, text="Create Account", width=20,
+                                   command=lambda: self.handle_register(
+                                       fullname_entry.get(),
+                                       username_entry.get(),
+                                       email_entry.get(),
+                                       password_entry.get(),
+                                       confirm_entry.get()))
+        create_btn.pack()
+        
+        # Back to login link
+        back_frame = tk.Frame(self.form_container, bg=COLORS["surface"])
+        back_frame.pack(fill=tk.X, pady=10)
+        
+        tk.Label(back_frame, text="Already have an account? ", font=FONTS["body"],
+                fg=COLORS["text_secondary"], bg=COLORS["surface"]).pack(side=tk.LEFT)
+        
+        back_btn = tk.Button(back_frame, text="Sign In", font=(FONTS["body"][0], FONTS["body"][1], "underline"),
+                            fg=COLORS["primary"], bg=COLORS["surface"], relief=tk.FLAT,
+                            cursor="hand2",
+                            command=self.show_login_form)
+        back_btn.pack(side=tk.LEFT)
+
+    def handle_login(self, username, password):
+        """Handle login process"""
+        if not username or not password:
+            show_message(self.parent, "Error", "All fields required", "error")
+            return
+        
+        user_id = self.db.authenticate_user(username, password)
+        if user_id:
+            user_data = self.db.get_user_by_id(user_id)
+            self.on_login_success(user_data)
+        else:
+            show_message(self.parent, "Error", "Invalid credentials", "error")
+
+    def handle_register(self, fullname, username, email, password, confirm_password):
+        """Handle registration process"""
+        if not all([fullname, username, email, password, confirm_password]):
+            show_message(self.parent, "Error", "All fields required", "error")
+            return
+        
+        if password != confirm_password:
+            show_message(self.parent, "Error", "Passwords do not match", "error")
+            return
+        
+        if not validate_email(email):
+            show_message(self.parent, "Error", "Invalid email address", "error")
+            return
+        
+        if not validate_password(password):
+            show_message(self.parent, "Error", 
+                        "Password must be 6+ chars with 1 uppercase and 1 digit", "error")
+            return
+        
+        try:
+            user_id = self.db.register_user(username, email, password, fullname)
+            if user_id:
+                user_data = self.db.get_user_by_id(user_id)
+                show_message(self.parent, "Success", "Account created! Logging in...", "info")
+                self.on_login_success(user_data)
+            else:
+                show_message(self.parent, "Error", "Username or email already exists", "error")
+        except Exception as e:
+            show_message(self.parent, "Error", f"Registration failed: {str(e)}", "error")
+```
+
+This redesign includes:
+- Modern card-based layout with accent bar
+- Better visual hierarchy
+- Improved spacing and padding
+- Smooth transitions between login/register
+- Enhanced form validation
+- Professional typography
+- Better button styling

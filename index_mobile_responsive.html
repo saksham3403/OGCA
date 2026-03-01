@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OG Accountant | Smart Accounting Desktop App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #0a0f1f;
+      --bg-deep: #04070f;
+      --card: rgba(10, 18, 34, 0.78);
+      --line: rgba(92, 147, 255, 0.28);
+      --text: #eff5ff;
+      --muted: #c0cee7;
+      --accent: #36d1dc;
+      --accent-2: #5b86e5;
+      --gold: #ffc857;
+      --ok: #7ef0a5;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: "Space Grotesk", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(54, 209, 220, 0.23), transparent 38%),
+        radial-gradient(circle at 83% 12%, rgba(91, 134, 229, 0.30), transparent 40%),
+        linear-gradient(135deg, var(--bg-main), var(--bg-deep) 62%);
+      overflow-x: hidden;
+    }
+
+    .page {
+      width: min(1120px, 92vw);
+      margin: 0 auto;
+      padding: 28px 0 44px;
+    }
+
+    .hero {
+      border: 1px solid var(--line);
+      background: linear-gradient(145deg, rgba(7, 15, 33, 0.88), rgba(11, 22, 45, 0.75));
+      backdrop-filter: blur(10px);
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
+      animation: reveal 700ms ease-out both;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: "Outfit", sans-serif;
+      font-size: clamp(1.12rem, 2vw, 1.5rem);
+      font-weight: 800;
+      letter-spacing: 0.3px;
+    }
+
+    .brand img {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+    }
+
+    .build-pill {
+      font-size: 0.88rem;
+      color: var(--ok);
+      background: rgba(126, 240, 165, 0.15);
+      border: 1px solid rgba(126, 240, 165, 0.35);
+      padding: 7px 12px;
+      border-radius: 999px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 26px;
+      align-items: center;
+    }
+
+    h1 {
+      font-family: "Outfit", sans-serif;
+      font-size: clamp(2rem, 5vw, 3.8rem);
+      line-height: 1.06;
+      margin-bottom: 14px;
+      letter-spacing: -0.6px;
+    }
+
+    .accent {
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: clamp(1rem, 1.8vw, 1.14rem);
+      line-height: 1.68;
+      max-width: 62ch;
+      margin-bottom: 24px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 50px;
+      padding: 12px 20px;
+      font-weight: 700;
+      border-radius: 14px;
+      transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+    }
+
+    .btn:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 2px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(92deg, var(--accent), var(--accent-2));
+      color: #051024;
+      box-shadow: 0 14px 34px rgba(54, 209, 220, 0.35);
+    }
+
+    .btn-secondary {
+      border: 1px solid rgba(255, 255, 255, 0.33);
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .side-card {
+      background: linear-gradient(160deg, rgba(3, 8, 19, 0.92), rgba(10, 20, 40, 0.77));
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 20px;
+    }
+
+    .side-card h2 {
+      font-family: "Outfit", sans-serif;
+      font-size: 1.25rem;
+      margin-bottom: 12px;
+    }
+
+    .side-card ul {
+      list-style: none;
+      display: grid;
+      gap: 10px;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .side-card li::before {
+      content: ">";
+      color: var(--gold);
+      margin-right: 10px;
+      font-weight: 700;
+    }
+
+    .file-note {
+      font-size: 0.9rem;
+      color: #c5d6ff;
+      background: rgba(91, 134, 229, 0.15);
+      border: 1px solid rgba(91, 134, 229, 0.35);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+
+    .details {
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .detail-card {
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 16px;
+      animation: rise 700ms ease-out both;
+    }
+
+    .detail-card h3 {
+      font-family: "Outfit", sans-serif;
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .detail-card p {
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 0.95rem;
+    }
+
+    footer {
+      margin-top: 26px;
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 0.95rem;
+      animation: reveal 850ms ease-out both;
+    }
+
+    footer a {
+      color: #9ec5ff;
+    }
+
+    @keyframes reveal {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    
+/* Tablet */
+@media (max-width: 950px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .side-card {
+    order: 2;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+
+  .page {
+    width: 94vw;
+    padding: 16px 0 30px;
+  }
+
+  .hero {
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .brand img {
+    width: 36px;
+    height: 36px;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    line-height: 1.2;
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+  }
+
+  .actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn {
+    width: 100%;
+    min-height: 48px;
+    font-size: 0.95rem;
+  }
+
+  .details {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .detail-card {
+    padding: 14px;
+  }
+
+  footer {
+    font-size: 0.85rem;
+    padding: 0 6px;
+  }
+}
+
+</style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="topbar">
+        <div class="brand">
+          <img src="og_circle_logo.png" alt="OG Accountant Logo">
+          <span>OG Accountant</span>
+        </div>
+        <div class="build-pill">Windows Desktop Build</div>
+      </div>
+
+      <div class="hero-grid">
+        <div>
+          <h1>The <span class="accent">OG Accountant</span> for fast and reliable business finance.</h1>
+          <p class="subtitle">
+            OG Accountant is a desktop accounting solution designed for smooth day-to-day bookkeeping, expense tracking, and smarter financial control without complexity.
+          </p>
+          <div class="actions">
+            <a class="btn btn-primary" href="dist/OG%20Accountant.exe" download="OG Accountant.exe">Download OG Accountant EXE</a>
+            <a class="btn btn-secondary" href="https://sakshamworks.netlify.app" target="_blank" rel="noopener noreferrer">Visit Portfolio</a>
+          </div>
+        </div>
+
+        <aside class="side-card">
+          <h2>What You Get</h2>
+          <ul>
+            <li>Simple and efficient account and expense management</li>
+            <li>Clean workflow built for speed and daily use</li>
+            <li>Secure local-first desktop setup for Windows</li>
+            <li>Professional interface with practical controls</li>
+          </ul>
+          <p class="file-note">Download target: <strong>dist/OG Accountant.exe</strong></p>
+        </aside>
+      </div>
+
+      <section class="details">
+        <article class="detail-card">
+          <h3>Built For Productivity</h3>
+          <p>Designed for accountants, business owners, and teams that need clear records and faster decision making.</p>
+        </article>
+        <article class="detail-card">
+          <h3>Stable Desktop Experience</h3>
+          <p>Runs as a standalone Windows executable, so setup is quick and usage stays simple.</p>
+        </article>
+        <article class="detail-card">
+          <h3>Direct Support Contact</h3>
+          <p>For queries, reach out instantly by phone or email using the contact details below.</p>
+        </article>
+      </section>
+    </section>
+
+    <footer>
+      <p>Made by <strong>Saksham Singh</strong>.</p>
+      <p>For any queries contact: <a href="tel:+918962890425">+91 8962890425</a> or email <a href="mailto:codersaksham@gmail.com">codersaksham@gmail.com</a></p>
+      <p>Portfolio: <a href="https://sakshamworks.netlify.app" target="_blank" rel="noopener noreferrer">https://sakshamworks.netlify.app</a></p>
+    </footer>
+  </main>
+</body>
+</html>
